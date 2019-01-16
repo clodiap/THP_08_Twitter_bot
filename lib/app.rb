@@ -18,6 +18,17 @@ def login_twitter
   return client
 end
 
+# clés d'API pour la fonction streaming
+def streaming
+  client = Twitter::Streaming::Client.new do |config|
+    config.consumer_key        = ENV["TWITTER_CONSUMER_KEY"]
+    config.consumer_secret     = ENV["TWITTER_CONSUMER_SECRET"]
+    config.access_token        = ENV["TWITTER_ACCESS_TOKEN"]
+    config.access_token_secret = ENV["TWITTER_ACCESS_TOKEN_SECRET"]
+  end
+  return client
+end
+
 ############################################
 ## 2.1. Il va dire bonjour
 ############################################
@@ -58,13 +69,22 @@ def follow_tweets_hashtag(my_hashtag, number)
     login_twitter.follow(tweet.user.screen_name)
   end
 end
-follow_tweets_hashtag("#bonjour_monde", 20)
+# follow_tweets_hashtag("#bonjour_monde", 20)
 
 ############################################
 ## 2.4 Il like et follow en live
 ############################################
-
-
+def follow_like_stream_hashtag(my_hashtag)
+  topics = [my_hashtag]
+  streaming.filter(track: topics.join(",")) do |tweet|
+    if tweet.is_a?(Twitter::Tweet)
+      puts tweet.text
+      login_twitter.favorite(tweet)
+      login_twitter.follow(tweet.user.screen_name)
+    end
+  end
+end
+follow_like_stream_hashtag("#bonjour_monde")
 
 
 
