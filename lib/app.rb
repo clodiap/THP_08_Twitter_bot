@@ -69,6 +69,7 @@ def follow_tweets_hashtag(my_hashtag, number)
     login_twitter.follow(tweet.user.screen_name)
   end
 end
+
 # follow_tweets_hashtag("#bonjour_monde", 20)
 
 ############################################
@@ -84,13 +85,30 @@ def follow_like_stream_hashtag(my_hashtag)
     end
   end
 end
-follow_like_stream_hashtag("#bonjour_monde")
 
+# follow_like_stream_hashtag("#bonjour_monde")
 
+############################################
+## Il répond au tweets avec 1 hashtag en live
+############################################
+def reply_stream_hashtag(my_hashtag, message)
+  topics = [my_hashtag]
+  streaming.filter(track: topics.join(",")) do |tweet|
+    if tweet.is_a?(Twitter::Tweet)
+      puts tweet.text + tweet.user.screen_name
+      login_twitter.update("@#{tweet.user.screen_name} #{message} @the_hacking_project", in_reply_to_status_id: tweet.id)
+      # login_twitter.favorite(tweet)
+      # login_twitter.follow(tweet.user.screen_name)
+    end
+  end
+end
 
+reply_stream_hashtag("#bonjour_monde", "Comment java ?")
 
+############################################
+## Essais
+############################################
 
-#essais
 # send_tweet(["@dany_about", "@hsravo", "@Arbousier5", "@NguyenJulien5"], "Coucou la team À l'arrache :) ")
 
 # login_twitter.update("@NguyenJulien5, coucou on tweet depuis Ruby @the_hacking_pro")
@@ -104,16 +122,5 @@ follow_like_stream_hashtag("#bonjour_monde")
 #   login_twitter.follow(i)
 # end
 
-
 # ligne qui permet de follower un compte
 # login_twitter.follow("Arbousier5")
-
-# login_twitter.friends("Arbousier5")
-
-
-
-# Il est ensuite très facile d'appeler les données du fichier .env, par exemple là je vais afficher le contenu de la clé TWITTER_API_SECRET
-# puts ENV['TWITTER_API_SECRET']
-
-# tout est stocké dans un hash qui s'appelle ENV. Tu peux le regarder en faisant :
-# puts ENV
